@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Overlay</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: transparent;
+      font-family: 'Courier New', Courier, monospace;
+      color: #00ff88;
+      font-size: 11px;
+      padding: 6px 10px;
+      user-select: none;
+    }
+    #overlay {
+      background: rgba(0, 0, 0, 0.60);
+      border: 1px solid rgba(0, 255, 136, 0.35);
+      border-radius: 4px;
+      padding: 6px 10px;
+      line-height: 1.7;
+      white-space: nowrap;
+    }
+    .label { color: #44ff99; }
+  </style>
+</head>
+<body>
+  <div id="overlay">
+    <div><span class="label">Node:</span> <span id="nodeId">—</span>  <span class="label">Mode:</span> <span id="mode">—</span></div>
+    <div><span class="label">CPU:</span> <span id="cpu">0</span>%  <span class="label">RAM:</span> <span id="ram">0</span> GB  <span class="label">GPU:</span> <span id="gpu">0</span>%</div>
+    <div><span class="label">Jobs:</span> <span id="jobs">0</span>  <span class="label">Preset:</span> <span id="preset">—</span></div>
+  </div>
+  <script>
+    /* globals clusterAPI */
+    clusterAPI.on('stats:update', (stats) => {
+      document.getElementById('nodeId').textContent = stats.node_id  || '—';
+      document.getElementById('mode').textContent   = stats.mode     || '—';
+      document.getElementById('cpu').textContent    = stats.cpu_usage  || 0;
+      document.getElementById('ram').textContent    = stats.ram_usage  || 0;
+      document.getElementById('gpu').textContent    = stats.gpu_usage  || 0;
+      document.getElementById('jobs').textContent   = stats.current_job ? 1 : 0;
+      document.getElementById('preset').textContent = stats.preset || '—';
+    });
+  </script>
+</body>
+</html>
