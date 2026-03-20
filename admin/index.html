@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Classroom Cluster – Admin Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════
+     HEADER
+══════════════════════════════════════════════ -->
+<header class="header">
+  <div>
+    <h1>🖥 Classroom Cluster</h1>
+    <div class="subtitle">Distributed Art / Compute Admin Dashboard</div>
+  </div>
+  <div id="connectionStatus">
+    <div class="dot" id="connDot"></div>
+    <span id="connLabel">Connecting…</span>
+  </div>
+</header>
+
+<!-- ══════════════════════════════════════════════
+     MAIN LAYOUT
+══════════════════════════════════════════════ -->
+<div class="layout">
+
+  <!-- ── Nodes ───────────────────────────────── -->
+  <div class="card" style="grid-column: 1 / span 2;">
+    <div class="card-title">
+      <span>Nodes <span id="nodeCount" style="color:var(--accent)">(0)</span></span>
+      <button class="small" id="btnRefreshNodes">↺ Refresh</button>
+    </div>
+    <div id="nodesGrid">
+      <div style="color:var(--muted); font-size:12px;">Waiting for nodes…</div>
+    </div>
+  </div>
+
+  <!-- ── Job Queue ────────────────────────────── -->
+  <div class="card" style="grid-column: 1 / span 2;">
+    <div class="card-title">
+      <span>Jobs</span>
+      <span id="jobCount" style="color:var(--muted); font-size:11px;">0 active</span>
+    </div>
+    <table id="jobTable">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Preset</th>
+          <th>Target</th>
+          <th>Node</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="jobTableBody">
+        <tr><td colspan="6" style="color:var(--muted); text-align:center; padding:16px;">No jobs yet</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── Sidebar: Job Control + Preset Editor ── -->
+  <div class="card sidebar">
+
+    <!-- Kill Switch -->
+    <button id="killSwitch" class="danger">⛔ KILL SWITCH – Stop All</button>
+
+    <hr style="border-color:var(--border); margin: 16px 0;" />
+
+    <!-- Start Job -->
+    <div class="card-title">Start Job</div>
+
+    <div class="form-group">
+      <label>Preset</label>
+      <select id="presetSelect">
+        <option value="">— Select preset —</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Target Mode</label>
+      <select id="targetMode">
+        <option value="all">All Nodes</option>
+        <option value="headless">Headless Only</option>
+        <option value="display">Display Only</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Parameters (JSON)</label>
+      <textarea id="paramsInput" placeholder='{"maxIter":256}'></textarea>
+    </div>
+
+    <button class="primary" id="btnStartJob" style="width:100%; margin-bottom:16px;">▶ Start Job</button>
+
+    <hr style="border-color:var(--border); margin: 0 0 16px;" />
+
+    <!-- Preset Editor -->
+    <div class="card-title">
+      <span>Preset Editor</span>
+      <button class="small" id="btnNewPreset">+ New</button>
+    </div>
+
+    <div class="form-group">
+      <label>Name</label>
+      <input type="text" id="peName" placeholder="MyPreset" />
+    </div>
+    <div class="form-group">
+      <label>Category</label>
+      <input type="text" id="peCategory" placeholder="Fractal" />
+    </div>
+    <div class="form-group">
+      <label>Description</label>
+      <input type="text" id="peDescription" placeholder="Brief description" />
+    </div>
+    <div class="form-group">
+      <label>Target Mode</label>
+      <select id="peTargetMode">
+        <option value="all">All</option>
+        <option value="headless">Headless</option>
+        <option value="display">Display</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Default Params (JSON)</label>
+      <textarea id="peParams" placeholder='{"maxIter":256}'></textarea>
+    </div>
+
+    <div style="display:flex; gap:8px;">
+      <button class="primary" id="btnSavePreset" style="flex:1">💾 Save</button>
+      <button class="danger"  id="btnDeletePreset" style="flex:1">🗑 Delete</button>
+    </div>
+
+  </div><!-- /sidebar -->
+
+</div><!-- /layout -->
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<!-- Socket.IO is served by our Express server automatically at /socket.io/socket.io.js -->
+<script src="/socket.io/socket.io.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
