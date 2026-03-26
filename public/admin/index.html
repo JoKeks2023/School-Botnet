@@ -33,6 +33,59 @@
         <p class="small muted">Active Room: <span id="activeRoom" class="code">-</span></p>
       </section>
 
+      <section class="panel" id="displayPanel" style="display:none;">
+        <h2>Display / Licht</h2>
+        <div class="row">
+          <label>
+            Farbe
+            <input id="solidColorInput" type="color" value="#00ff66" />
+          </label>
+          <button id="setSolidBtn">Solid an alle senden</button>
+          <button class="secondary" id="displayOffBtn">Display aus</button>
+        </div>
+        <label>
+          Sequenz JSON (z.B. [{"color":"#ff0000","durationMs":400},{"color":"#0000ff","durationMs":400}])
+          <textarea id="sequenceInput" rows="4">[{"color":"#ff0000","durationMs":400},{"color":"#00ff00","durationMs":400},{"color":"#0000ff","durationMs":400}]</textarea>
+        </label>
+        <button id="setSequenceBtn">Sequenz starten</button>
+        <hr />
+        <label>
+          Snake-Laenge (in Screens)
+          <input id="snakeLengthInput" type="number" min="1" max="512" value="8" />
+        </label>
+        <label>
+          Snake-Geschwindigkeit (ms pro Schritt)
+          <input id="snakeSpeedInput" type="number" min="60" max="10000" value="220" />
+        </label>
+        <label>
+          Snake-Farbpalette JSON (z.B. ["#ffffff","#00ffff","#000000"])
+          <textarea id="snakePaletteInput" rows="3">["#ffffff","#00ffff","#0000ff","#000000"]</textarea>
+        </label>
+        <button id="setSnakeBtn">Snake starten (ueber mehrere Screens)</button>
+      </section>
+
+      <section class="panel" id="pythonPanel" style="display:none;">
+        <h2>Python Compute Task</h2>
+        <label>
+          Chunks
+          <input id="pythonChunksInput" type="number" min="1" max="5000" value="40" />
+        </label>
+        <label>
+          Python Script (muss compute(chunk_index, total_chunks) definieren)
+          <textarea id="pythonScriptInput" rows="12">def compute(chunk_index, total_chunks):
+    # Beispiel: synthetische Berechnung
+    acc = 0
+    for i in range(10000 + chunk_index * 10):
+        acc += (i % 13)
+    return {
+        "chunk_index": chunk_index,
+        "total_chunks": total_chunks,
+        "checksum": acc
+    }</textarea>
+        </label>
+        <button id="createPythonTaskBtn">Python Task starten</button>
+      </section>
+
       <section class="panel" id="codesPanel" style="display:none;">
         <h2>Join-Codes</h2>
         <p>Raumcode: <span id="roomCodeText" class="code">-</span></p>

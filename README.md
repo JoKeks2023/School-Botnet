@@ -20,6 +20,9 @@ Du bekommst:
 - Einmalcodes (TTL + nur einmal nutzbar) fuer Client-Join
 - Task-Start/Stop mit Chunk-Verteilung
 - Heartbeat-basiertes Online/Offline-Tracking
+- Display-Modi: Solid, Sequenz und Snake ueber mehrere Clients
+- Optionaler Art-Net/sACN Output (16 Pixel / Strahlerfarben)
+- Python-Compute-Tasks aus dem Admin-Dashboard
 
 ## Tech Stack
 
@@ -27,6 +30,7 @@ Du bekommst:
 - Frontend: Vanilla HTML/CSS/JS
 - Deployment: Docker + docker-compose
 - Packaging: `pkg` fuer EXE-Builds
+- Native Admin App (macOS): Electron-basierte Desktop-App (.app)
 
 ## Schnellstart (Lokal)
 
@@ -51,6 +55,48 @@ Dann im Browser:
 
 - Admin: `http://<server-ip>:3000/admin`
 - Client: `http://<server-ip>:3000/client`
+
+## Native macOS Admin App (.app)
+
+Das ist eine echte Desktop-App fuer macOS (keine PWA). Die App enthaelt:
+
+- eingebettetes Admin-Dashboard
+- sACN-Receiver (Universe/Port einstellbar)
+- 16-Pixel Live-Vorschau fuer empfangene DMX-Werte
+
+Install + Dev-Start:
+
+```bash
+npm run admin:app:install
+npm run admin:app:dev
+```
+
+macOS Build (.app/.dmg):
+
+```bash
+npm run admin:app:build:mac
+```
+
+Projekt der nativen App:
+
+- `admin-macos-app/`
+
+## Display + Art-Net/sACN
+
+Im Admin-Dashboard kannst du fuer einen Raum setzen:
+
+- Solid-Farbe fuer alle Clients
+- Sequenz per JSON Frames
+- Snake-Modus ueber mehrere Screens (lange Schlange)
+
+Optionaler Licht-Output ueber Server-Env:
+
+- `LIGHTING_ENABLED=true`
+- `LIGHTING_PROTOCOL=artnet` oder `sacn`
+- `LIGHTING_HOST=<target-ip>`
+- `LIGHTING_PIXELS=16`
+- Art-Net: `ARTNET_PORT`, `ARTNET_UNIVERSE`
+- sACN: `SACN_PORT`, `SACN_UNIVERSE`
 
 ## GitHub Container Package (GHCR)
 

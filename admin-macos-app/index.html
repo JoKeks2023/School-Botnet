@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>School-Botnet Admin (macOS)</title>
+    <style>
+      :root {
+        --bg: #0f1115;
+        --panel: #171a21;
+        --line: #2a3040;
+        --text: #e8ecf1;
+        --muted: #9ea9b8;
+        --accent: #26d0a8;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+        background: radial-gradient(circle at top left, #1d2230, var(--bg));
+        color: var(--text);
+      }
+      .layout {
+        display: grid;
+        grid-template-columns: 380px 1fr;
+        gap: 12px;
+        height: 100vh;
+        padding: 12px;
+      }
+      .panel {
+        background: rgba(23, 26, 33, 0.92);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 12px;
+      }
+      .panel h2 { margin: 0 0 10px; }
+      .row { display: flex; gap: 8px; margin-bottom: 10px; }
+      input, button {
+        border-radius: 10px;
+        border: 1px solid var(--line);
+        padding: 9px 10px;
+        background: #11151f;
+        color: var(--text);
+      }
+      button { cursor: pointer; }
+      button.primary { background: #1f7a64; border-color: #1f7a64; }
+      .small { color: var(--muted); font-size: 13px; }
+      #adminFrame {
+        width: 100%;
+        height: calc(100vh - 24px);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: #ffffff;
+      }
+      .pixel-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+      }
+      .pixel {
+        aspect-ratio: 1;
+        border-radius: 9px;
+        border: 1px solid #2c3346;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="layout">
+      <div class="panel">
+        <h2>Native Admin App</h2>
+        <p class="small">Diese App ist eine macOS Desktop-App (.app), keine PWA.</p>
+
+        <div class="row">
+          <input id="serverUrlInput" value="http://localhost:3000" style="flex:1" />
+          <button id="connectBtn" class="primary">Verbinden</button>
+        </div>
+
+        <h3>sACN Receiver</h3>
+        <div class="row">
+          <input id="universeInput" type="number" value="1" min="1" max="63999" style="width:110px" />
+          <input id="portInput" type="number" value="5568" min="1" max="65535" style="width:110px" />
+        </div>
+        <div class="row">
+          <button id="startSacnBtn" class="primary">Receiver Start</button>
+          <button id="stopSacnBtn">Receiver Stop</button>
+        </div>
+        <p id="sacnStatus" class="small">Receiver inaktiv</p>
+        <p id="sacnMeta" class="small">Noch keine Frames empfangen</p>
+
+        <h3>16 Pixel Vorschau</h3>
+        <div id="pixelGrid" class="pixel-grid"></div>
+      </div>
+
+      <iframe id="adminFrame" title="Admin Dashboard"></iframe>
+    </div>
+    <script src="./renderer.js"></script>
+  </body>
+</html>

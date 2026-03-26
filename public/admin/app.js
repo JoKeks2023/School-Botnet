@@ -5,6 +5,8 @@ const api = {
 
 const loginPanel = document.getElementById("loginPanel");
 const controlPanel = document.getElementById("controlPanel");
+const displayPanel = document.getElementById("displayPanel");
+const pythonPanel = document.getElementById("pythonPanel");
 const codesPanel = document.getElementById("codesPanel");
 const statusPanel = document.getElementById("statusPanel");
 const adminPassword = document.getElementById("adminPassword");
@@ -15,6 +17,19 @@ const createRoomBtn = document.getElementById("createRoomBtn");
 const issueCodeBtn = document.getElementById("issueCodeBtn");
 const createTaskBtn = document.getElementById("createTaskBtn");
 const stopTasksBtn = document.getElementById("stopTasksBtn");
+const setSolidBtn = document.getElementById("setSolidBtn");
+const setSequenceBtn = document.getElementById("setSequenceBtn");
+const displayOffBtn = document.getElementById("displayOffBtn");
+const setSnakeBtn = document.getElementById("setSnakeBtn");
+const createPythonTaskBtn = document.getElementById("createPythonTaskBtn");
+
+const solidColorInput = document.getElementById("solidColorInput");
+const sequenceInput = document.getElementById("sequenceInput");
+const snakeLengthInput = document.getElementById("snakeLengthInput");
+const snakeSpeedInput = document.getElementById("snakeSpeedInput");
+const snakePaletteInput = document.getElementById("snakePaletteInput");
+const pythonChunksInput = document.getElementById("pythonChunksInput");
+const pythonScriptInput = document.getElementById("pythonScriptInput");
 
 const roomCodeText = document.getElementById("roomCodeText");
 const lastCodeText = document.getElementById("lastCodeText");
@@ -27,6 +42,8 @@ const pendingCodesList = document.getElementById("pendingCodesList");
 function setLoggedIn(loggedIn) {
   loginPanel.style.display = loggedIn ? "none" : "block";
   controlPanel.style.display = loggedIn ? "block" : "none";
+  displayPanel.style.display = loggedIn ? "block" : "none";
+  pythonPanel.style.display = loggedIn ? "block" : "none";
   codesPanel.style.display = loggedIn ? "block" : "none";
   statusPanel.style.display = loggedIn ? "block" : "none";
 }
@@ -174,6 +191,103 @@ stopTasksBtn.addEventListener("click", async () => {
     await fetchJson(`/api/admin/rooms/${api.roomCode}/stop`, {
       method: "POST",
       headers: authHeaders()
+    });
+    await refreshRoomState();
+  } catch (error) {
+    alert(`Fehler: ${error.message}`);
+  }
+});
+
+setSolidBtn.addEventListener("click", async () => {
+  if (!api.roomCode) {
+    alert("Erst Raum erstellen.");
+    return;
+  }
+  try {
+    await fetchJson(`/api/admin/rooms/${api.roomCode}/display/solid`, {
+      method: "POST",
+      headers: authHeaders(),
+      body: JSON.stringify({ color: solidColorInput.value })
+    });
+    await refreshRoomState();
+  } catch (error) {
+    alert(`Fehler: ${error.message}`);
+  }
+});
+
+setSequenceBtn.addEventListener("click", async () => {
+  if (!api.roomCode) {
+    alert("Erst Raum erstellen.");
+    return;
+  }
+
+  try {
+    const frames = JSON.parse(sequenceInput.value);
+    await fetchJson(`/api/admin/rooms/${api.roomCode}/display/sequence`, {
+      method: "POST",
+      headers: authHeaders(),
+      body: JSON.stringify({ frames })
+    });
+    await refreshRoomState();
+  } catch (error) {
+    alert(`Fehler: ${error.message}`);
+  }
+});
+
+setSnakeBtn.addEventListener("click", async () => {
+  if (!api.roomCode) {
+    alert("Erst Raum erstellen.");
+    return;
+  }
+
+  try {
+    const palette = JSON.parse(snakePaletteInput.value);
+    await fetchJson(`/api/admin/rooms/${api.roomCode}/display/snake`, {
+      method: "POST",
+      headers: authHeaders(),
+      body: JSON.stringify({
+        length: Number(snakeLengthInput.value),
+        speedMs: Number(snakeSpeedInput.value),
+        palette
+      })
+    });
+    await refreshRoomState();
+  } catch (error) {
+    alert(`Fehler: ${error.message}`);
+  }
+});
+
+displayOffBtn.addEventListener("click", async () => {
+  if (!api.roomCode) {
+    alert("Erst Raum erstellen.");
+    return;
+  }
+  try {
+    await fetchJson(`/api/admin/rooms/${api.roomCode}/display/off`, {
+      method: "POST",
+      headers: authHeaders()
+    });
+    await refreshRoomState();
+  } catch (error) {
+    alert(`Fehler: ${error.message}`);
+  }
+});
+
+createPythonTaskBtn.addEventListener("click", async () => {
+  if (!api.roomCode) {
+    alert("Erst Raum erstellen.");
+    return;
+  }
+
+  try {
+    await fetchJson(`/api/admin/rooms/${api.roomCode}/tasks`, {
+      method: "POST",
+      headers: authHeaders(),
+      body: JSON.stringify({
+        type: "python_chunk",
+        totalChunks: Number(pythonChunksInput.value || 40),
+        script: pythonScriptInput.value
+      })
     });
     await refreshRoomState();
   } catch (error) {

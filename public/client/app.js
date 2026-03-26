@@ -8,6 +8,7 @@ const joinMsg = document.getElementById("joinMsg");
 const clientIdEl = document.getElementById("clientId");
 const statusText = document.getElementById("statusText");
 const chunksDone = document.getElementById("chunksDone");
+const displayModeText = document.getElementById("displayModeText");
 
 const session = {
   clientToken: null,
@@ -18,6 +19,11 @@ const session = {
 
 let heartbeatInFlight = false;
 let taskInFlight = false;
+let displayInFlight = false;
+let pyodideInstance = null;
+let pyodideLoadingPromise = null;
+let displayTimer = null;
+let activeDisplayVersion = -1;
 
 function setJoined(joined) {
   joinPanel.style.display = joined ? "none" : "block";
@@ -35,6 +41,105 @@ async function fetchJson(url, options = {}) {
 
 function setStatus(text) {
   statusText.textContent = text;
+}
+
+function clearDisplayLoop() {
+  if (displayTimer) {
+    clearInterval(displayTimer);
+    displayTimer = null;
+  }
+}
+
+function applySolidDisplay(color) {
+  document.body.style.background = color;
+}
+
+function applyDisplayState(display) {
+  if (!display) {
+    return;
+  }
+
+  if (display.version === activeDisplayVersion) {
+    return;
+  }
+
+  activeDisplayVersion = display.version;
+  clearDisplayLoop();
+  displayModeText.textContent = display.mode;
+
+  if (display.mode === "off") {
+    document.body.style.background = "";
+    return;
+  }
+
+  if (display.mode === "solid") {
+    applySolidDisplay(display.clientColor || display.color || "#000000");
+    return;
+  }
+
+  if (display.mode === "snake") {
+    applySolidDisplay(display.clientColor || "#000000");
+    return;
+  }
+
+  if (display.mode === "sequence" && Array.isArray(display.frames) && display.frames.length) {
+    const frames = display.frames;
+    const total = frames.reduce((sum, frame) => sum + frame.durationMs, 0);
+    const tick = () => {
+      const elapsed = (Date.now() - display.startedAt) % Math.max(total, 1);
+      let acc = 0;
+      for (const frame of frames) {
+        acc += frame.durationMs;
+        if (elapsed < acc) {
+          applySolidDisplay(display.clientColor || frame.color);
+          return;
+        }
+      }
+      applySolidDisplay(display.clientColor || frames[frames.length - 1].color);
+    };
+
+    tick();
+    displayTimer = setInterval(tick, 80);
+  }
+}
+
+async function loadPyodideRuntime() {
+  if (pyodideInstance) {
+    return pyodideInstance;
+  }
+  if (pyodideLoadingPromise) {
+    return pyodideLoadingPromise;
+  }
+
+  pyodideLoadingPromise = (async () => {
+    if (!window.loadPyodide) {
+      await new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+        script.src = "https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js";
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+      });
+    }
+
+    pyodideInstance = await window.loadPyodide({
+      indexURL: "https://cdn.jsdelivr.net/pyodide/v0.26.4/full/"
+    });
+    return pyodideInstance;
+  })();
+
+  return pyodideLoadingPromise;
+}
+
+async function runPythonWork(task) {
+  const pyodide = await loadPyodideRuntime();
+  pyodide.globals.set("chunk_index", task.chunkIndex);
+  pyodide.globals.set("total_chunks", task.totalChunks);
+
+  const code = `${task.script}\n\nimport json\n_result_json = json.dumps(compute(chunk_index, total_chunks))`;
+  await pyodide.runPythonAsync(code);
+  const resultJson = pyodide.globals.get("_result_json");
+  return JSON.parse(resultJson);
 }
 
 function fakeComputeWork(task) {
@@ -106,7 +211,9 @@ async function taskLoop() {
     }
 
     setStatus(`working:${next.task.chunkIndex}`);
-    const result = await fakeComputeWork(next.task);
+    const result = next.task.type === "python_chunk" && next.task.script
+      ? await runPythonWork(next.task)
+      : await fakeComputeWork(next.task);
 
     await fetchJson("/api/client/result", {
       method: "POST",
@@ -126,6 +233,30 @@ async function taskLoop() {
     setStatus(`error:${error.message}`);
   } finally {
     taskInFlight = false;
+  }
+}
+
+async function displayLoop() {
+  if (!session.clientToken) {
+    return;
+  }
+
+  if (displayInFlight) {
+    return;
+  }
+
+  displayInFlight = true;
+  try {
+    const payload = await fetchJson("/api/client/display", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ clientToken: session.clientToken })
+    });
+    applyDisplayState(payload.display);
+  } catch (error) {
+    setStatus(`display_error:${error.message}`);
+  } finally {
+    displayInFlight = false;
   }
 }
 
@@ -158,6 +289,7 @@ joinBtn.addEventListener("click", async () => {
 setInterval(() => {
   heartbeatLoop();
   taskLoop();
+  displayLoop();
 }, 2000);
 
 setJoined(false);

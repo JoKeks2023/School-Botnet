@@ -7,6 +7,9 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "node --watch src/server.js",
+    "admin:app:install": "npm --prefix admin-macos-app install",
+    "admin:app:dev": "npm --prefix admin-macos-app run dev",
+    "admin:app:build:mac": "npm --prefix admin-macos-app run build:mac",
     "build:exe:win": "pkg . --targets node18-win-x64 --output dist/school-botnet.exe",
     "build:exe:linux": "pkg . --targets node18-linux-x64 --output dist/school-botnet-linux",
     "build:exe:mac": "pkg . --targets node18-macos-x64 --output dist/school-botnet-macos",
