@@ -1,0 +1,12 @@
+services:
+  school-botnet:
+    build: .
+    container_name: school-botnet
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-change-me}
+      - JOIN_CODE_TTL_MINUTES=${JOIN_CODE_TTL_MINUTES:-15}
+      - HEARTBEAT_TIMEOUT_SECONDS=${HEARTBEAT_TIMEOUT_SECONDS:-30}

@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Client</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <h1>Client</h1>
+
+      <section class="panel" id="joinPanel">
+        <h2>Join</h2>
+        <label>
+          Anzeigename
+          <input id="nameInput" type="text" value="pc-client" />
+        </label>
+        <label>
+          8-stelliger Raumcode
+          <input id="roomCodeInput" type="text" inputmode="numeric" maxlength="8" />
+        </label>
+        <label>
+          8-stelliger Einmalcode
+          <input id="confirmationCodeInput" type="text" inputmode="numeric" maxlength="8" />
+        </label>
+        <button id="joinBtn">Verbinden</button>
+        <p id="joinMsg" class="muted"></p>
+      </section>
+
+      <section class="panel" id="runPanel" style="display:none;">
+        <h2>Laufender Client</h2>
+        <p>Client ID: <span id="clientId" class="code">-</span></p>
+        <p>Status: <span id="statusText" class="badge">idle</span></p>
+        <p>Bearbeitete Chunks: <span id="chunksDone">0</span></p>
+        <p class="small muted">Dieses Fenster offen lassen.</p>
+      </section>
+    </main>
+
+    <script src="/client/app.js"></script>
+  </body>
+</html>

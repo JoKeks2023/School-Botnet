@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <h1>Admin Dashboard</h1>
+
+      <section class="panel" id="loginPanel">
+        <h2>Admin Login</h2>
+        <label>
+          Passwort
+          <input id="adminPassword" type="password" placeholder="ADMIN_PASSWORD" />
+        </label>
+        <button id="loginBtn">Einloggen</button>
+        <p id="loginMsg" class="muted"></p>
+      </section>
+
+      <section class="panel" id="controlPanel" style="display:none;">
+        <h2>Steuerung</h2>
+        <div class="row">
+          <button id="createRoomBtn">Neuen Raum erstellen</button>
+          <button class="secondary" id="issueCodeBtn">8-stelligen Client-Code erzeugen</button>
+        </div>
+        <div class="row" style="margin-top:8px;">
+          <button id="createTaskBtn">Demo-Task starten (200 Chunks)</button>
+          <button class="danger" id="stopTasksBtn">Laufende Tasks stoppen</button>
+        </div>
+        <p class="small muted">Active Room: <span id="activeRoom" class="code">-</span></p>
+      </section>
+
+      <section class="panel" id="codesPanel" style="display:none;">
+        <h2>Join-Codes</h2>
+        <p>Raumcode: <span id="roomCodeText" class="code">-</span></p>
+        <p>Letzter Einmalcode: <span id="lastCodeText" class="code">-</span></p>
+      </section>
+
+      <section class="panel" id="statusPanel" style="display:none;">
+        <h2>Live Status</h2>
+        <div class="grid">
+          <div>
+            <h3>Clients</h3>
+            <ul id="clientsList"></ul>
+          </div>
+          <div>
+            <h3>Tasks</h3>
+            <ul id="tasksList"></ul>
+          </div>
+          <div>
+            <h3>Offene Einmalcodes</h3>
+            <ul id="pendingCodesList"></ul>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/admin/app.js"></script>
+  </body>
+</html>
