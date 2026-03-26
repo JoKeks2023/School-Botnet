@@ -3,9 +3,15 @@
   "version": "0.1.0",
   "description": "Distributed classroom compute MVP",
   "main": "src/server.js",
+  "bin": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
-    "dev": "node --watch src/server.js"
+    "dev": "node --watch src/server.js",
+    "build:exe:win": "pkg . --targets node18-win-x64 --output dist/school-botnet.exe",
+    "build:exe:linux": "pkg . --targets node18-linux-x64 --output dist/school-botnet-linux",
+    "build:exe:mac": "pkg . --targets node18-macos-x64 --output dist/school-botnet-macos",
+    "build:exe:all": "npm run build:exe:win && npm run build:exe:linux && npm run build:exe:mac",
+    "build:exe": "npm run build:exe:win"
   },
   "engines": {
     "node": ">=20"
@@ -15,5 +21,17 @@
     "dotenv": "^16.6.1",
     "express": "^4.21.2",
     "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "pkg": "^5.8.1"
+  },
+  "pkg": {
+    "scripts": [
+      "src/**/*.js"
+    ],
+    "assets": [
+      "public/**/*",
+      ".env.example"
+    ]
   }
 }

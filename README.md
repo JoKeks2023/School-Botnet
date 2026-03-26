@@ -31,23 +31,23 @@ Diese erste Implementierung liefert ein lauffaehiges Grundgeruest:
 
 1. `.env` anlegen:
 
-	```bash
-	cp .env.example .env
-	```
+```bash
+cp .env.example .env
+```
 
-2. Abhaengigkeiten installieren:
+1. Abhaengigkeiten installieren:
 
-	```bash
-	npm install
-	```
+```bash
+npm install
+```
 
-3. Server starten:
+1. Server starten:
 
-	```bash
-	npm start
-	```
+```bash
+npm start
+```
 
-4. UIs aufrufen:
+1. UIs aufrufen:
 
 - Admin: `http://localhost:3000/admin`
 - Client: `http://localhost:3000/client`
@@ -62,6 +62,20 @@ Danach:
 
 - Admin: `http://<raspberry-pi-ip>:3000/admin`
 - Client: `http://<raspberry-pi-ip>:3000/client`
+
+## Windows EXE Build
+
+1. Build starten:
+
+```bash
+npm run build:exe:win
+```
+
+1. Ergebnis:
+
+- `dist/school-botnet.exe`
+
+Hinweis: Die EXE enthaelt den Node.js-Server und die statischen Dateien aus `public/`.
 
 ## Show-Ablauf (dein Setup)
 
