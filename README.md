@@ -2,100 +2,113 @@
 
 Legales Schulprojekt fuer verteiltes Rechnen mit einem zentralen Server und mehreren Browser-Clients.
 
-## MVP-Status
+## Was Ist Das?
 
-Diese erste Implementierung liefert ein lauffaehiges Grundgeruest:
+School-Botnet ist ein transparentes Demo-System fuer Unterricht und Workshops.
 
-- Admin Dashboard fuer Login, Raum erstellen, 8-stellige Join-Codes erzeugen, Demo-Task starten/stoppen
-- Client-Oberflaeche fuer manuelles Joinen per Raumcode + Einmalcode
-- Verteilung von Task-Chunks an Clients
-- Rueckmeldung von Ergebnissen und Live-Status im Admin Dashboard
-- Docker-Setup fuer Betrieb auf Raspberry Pi
+Du bekommst:
 
-## Architektur (MVP)
+- ein Admin-Dashboard zum Steuern und Beobachten
+- mehrere Browser-Clients, die Chunks verarbeiten
+- Live-Status via Socket.IO
+- einfachen Betrieb lokal, per Docker oder als Windows-EXE
 
-- Server: Node.js + Express + Socket.IO
-- Deployment: Docker (ARM64-kompatibel)
-- Admin: Browser auf MacBook
-- Clients: Browser auf Windows 10 (manuell gestartet, danach unbeaufsichtigt)
+## Kernfunktionen
 
-## Sicherheitsmodell (MVP)
+- Admin-Login mit Passwort
+- Raum-Erstellung mit 8-stelligem Raumcode
+- Einmalcodes (TTL + nur einmal nutzbar) fuer Client-Join
+- Task-Start/Stop mit Chunk-Verteilung
+- Heartbeat-basiertes Online/Offline-Tracking
 
-- Admin muss sich einloggen
-- Join benoetigt zwei Codes:
-  - 8-stelliger Raumcode
-  - 8-stelliger Einmalcode (nur einmal nutzbar, mit TTL)
-- Nur Admin kann Tasks starten/stoppen
+## Tech Stack
 
-## Schnellstart lokal
+- Backend: Node.js, Express, Socket.IO
+- Frontend: Vanilla HTML/CSS/JS
+- Deployment: Docker + docker-compose
+- Packaging: `pkg` fuer EXE-Builds
 
-1. `.env` anlegen:
+## Schnellstart (Lokal)
 
 ```bash
 cp .env.example .env
-```
-
-1. Abhaengigkeiten installieren:
-
-```bash
 npm install
-```
-
-1. Server starten:
-
-```bash
 npm start
 ```
 
-1. UIs aufrufen:
+Dann im Browser:
 
 - Admin: `http://localhost:3000/admin`
 - Client: `http://localhost:3000/client`
 
-## Docker Start
+## Schnellstart (Docker)
 
 ```bash
-docker compose up --build
+docker compose up --build -d
 ```
 
-Danach:
+Dann im Browser:
 
-- Admin: `http://<raspberry-pi-ip>:3000/admin`
-- Client: `http://<raspberry-pi-ip>:3000/client`
+- Admin: `http://<server-ip>:3000/admin`
+- Client: `http://<server-ip>:3000/client`
 
-## Windows EXE Build
+## EXE Builds
 
-1. Build starten:
+Windows:
 
 ```bash
 npm run build:exe:win
 ```
 
-1. Ergebnis:
+Weitere Targets:
+
+```bash
+npm run build:exe:linux
+npm run build:exe:mac
+npm run build:exe:all
+```
+
+Output:
 
 - `dist/school-botnet.exe`
+- `dist/school-botnet-linux`
+- `dist/school-botnet-macos`
 
-Hinweis: Die EXE enthaelt den Node.js-Server und die statischen Dateien aus `public/`.
+## Doku-Index
 
-## Show-Ablauf (dein Setup)
+- [Product Scope](docs/PRODUCT_SCOPE.md)
+- [Architecture](docs/ARCHITECTURE.md)
+- [API Specification](docs/API_SPEC.md)
+- [Security](docs/SECURITY.md)
+- [Deployment](docs/DEPLOYMENT.md)
+- [Windows 10 Client Setup](docs/WIN10_CLIENT_SETUP.md)
+- [Demo Runbook](docs/DEMO_RUNBOOK.md)
+- [Troubleshooting](docs/TROUBLESHOOTING.md)
+- [EXE Build and Release](docs/EXE_BUILD_AND_RELEASE.md)
 
-1. Dashboard auf dem MacBook oeffnen
-2. Mit Admin-Passwort einloggen
-3. Raum erstellen
-4. Fuer jeden Windows-PC einen Einmalcode erzeugen
-5. Auf jedem PC Client-Seite oeffnen, Raumcode + Einmalcode eingeben
-6. Wenn alle verbunden sind, Demo-Task starten
-7. Live-Fortschritt im Dashboard beobachten
+## Show-Ablauf (Empfohlen)
 
-## Wichtige Hinweise
+1. Admin-Dashboard oeffnen und einloggen.
+2. Raum erstellen.
+3. Pro Client einen Einmalcode ausgeben.
+4. Clients beitreten lassen.
+5. Task starten und Fortschritt beobachten.
+6. Task kontrolliert stoppen und Session abschliessen.
 
-- Dieses Projekt ist fuer legale, transparente Demo- und Lernzwecke gedacht.
-- Keine versteckte Ausfuehrung, keine Selbstverbreitung, keine Angriffsfunktionen.
-- Der aktuelle MVP speichert Daten nur im Speicher (kein persistentes DB-Backend).
+## Sicherheits- und Ethik-Hinweis
 
-## Naechste Schritte
+- Nur fuer legale, transparente Lehr- und Demo-Zwecke.
+- Keine versteckte Ausfuehrung.
+- Keine Selbstverbreitung.
+- Keine Angriffsfunktionen.
 
-- Persistenz (SQLite/PostgreSQL)
-- Robusteres Scheduling (Retry-Queue, Lost-Chunk-Recovery)
-- Echte Worker-Auslagerung im Client (Web Worker)
-- Kiosk-/Fullscreen-Optimierung fuer unbeaufsichtigte Show-Clients
+## Projektstatus
+
+MVP: lauffaehig mit In-Memory-Statusverwaltung.
+
+Geplante naechste Ausbaustufen:
+
+- persistente Datenhaltung
+- robustere Chunk-Recovery
+- Worker-Auslagerung im Client
+- weiter optimierter Kiosk-Betrieb
