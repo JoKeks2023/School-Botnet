@@ -52,6 +52,22 @@ Dann im Browser:
 - Admin: `http://<server-ip>:3000/admin`
 - Client: `http://<server-ip>:3000/client`
 
+## GitHub Container Package (GHCR)
+
+Das Projekt published automatisch ein Docker-Image nach GHCR bei Push auf `main` und bei Version-Tags.
+
+Package:
+
+- `ghcr.io/jokeks2023/school-botnet:latest`
+
+Image starten:
+
+```bash
+docker run --rm -p 3000:3000 \
+	-e ADMIN_PASSWORD=change-me \
+	ghcr.io/jokeks2023/school-botnet:latest
+```
+
 ## EXE Builds
 
 Windows:
@@ -85,6 +101,7 @@ Output:
 - [Demo Runbook](docs/DEMO_RUNBOOK.md)
 - [Troubleshooting](docs/TROUBLESHOOTING.md)
 - [EXE Build and Release](docs/EXE_BUILD_AND_RELEASE.md)
+- [Container Publish Workflow](.github/workflows/publish-container.yml)
 
 ## Show-Ablauf (Empfohlen)
 
