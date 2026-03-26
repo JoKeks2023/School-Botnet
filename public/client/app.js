@@ -16,6 +16,9 @@ const session = {
   chunksDone: 0
 };
 
+let heartbeatInFlight = false;
+let taskInFlight = false;
+
 function setJoined(joined) {
   joinPanel.style.display = joined ? "none" : "block";
   runPanel.style.display = joined ? "block" : "none";
@@ -56,6 +59,12 @@ async function heartbeatLoop() {
     return;
   }
 
+  if (heartbeatInFlight) {
+    return;
+  }
+
+  heartbeatInFlight = true;
+
   try {
     await fetchJson("/api/client/heartbeat", {
       method: "POST",
@@ -68,6 +77,8 @@ async function heartbeatLoop() {
     });
   } catch (error) {
     setStatus(`heartbeat_error:${error.message}`);
+  } finally {
+    heartbeatInFlight = false;
   }
 }
 
@@ -75,6 +86,12 @@ async function taskLoop() {
   if (!session.clientToken) {
     return;
   }
+
+  if (taskInFlight) {
+    return;
+  }
+
+  taskInFlight = true;
 
   try {
     const next = await fetchJson("/api/client/next", {
@@ -107,6 +124,8 @@ async function taskLoop() {
     setStatus("submitted");
   } catch (error) {
     setStatus(`error:${error.message}`);
+  } finally {
+    taskInFlight = false;
   }
 }
 
